@@ -3,7 +3,7 @@
   "env": {
     "PORT": "@port",
     "MONGODB_URI": "@mongodb_uri",
-    "MONGODB_NAME": "@@mongodb_name",
+    "MONGODB_NAME": "@mongodb_name",
     "JWT_SECRET": "@jwt_secret",
     "JWT_EXPIRES": "@jwt_expires"
   },
