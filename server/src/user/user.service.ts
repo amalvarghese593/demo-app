@@ -19,7 +19,11 @@ export class UserService {
     return await this.userModel.create({ name, email, password });
   }
 
-  async findUser(email: string): Promise<UserDocument> {
+  async findUserByEmail(email: string): Promise<UserDocument> {
     return await this.userModel.findOne({ email });
+  }
+
+  async findUserById(id: string): Promise<UserDocument> {
+    return await this.userModel.findOne({ _id: id });
   }
 }

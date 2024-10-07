@@ -8,6 +8,8 @@ import { AuthModule } from './auth/auth.module';
 import appConfig from './config/app.config';
 import { MONGODB_NAME, MONGODB_URI } from './consts';
 import { UserModule } from './user/user.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -27,10 +29,22 @@ import { UserModule } from './user/user.module';
         dbName: configService.get<string>(MONGODB_NAME),
       }),
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 1000,
+        limit: 10,
+      },
+    ]),
     AuthModule,
     UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

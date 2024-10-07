@@ -5,10 +5,13 @@ import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exception-filter';
 import { LoggerInterceptor } from './common/interceptors/logger.interceptor';
 import { PORT } from './consts';
+import helmet from 'helmet';
 
 async function bootstrap() {
   try {
     const app = await NestFactory.create(AppModule);
+    app.enableCors();
+    app.use(helmet());
 
     app.setGlobalPrefix('api/v1', { exclude: ['/healthz'] });
     app.useGlobalPipes(

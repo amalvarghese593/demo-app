@@ -9,7 +9,7 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { UserService } from 'src/user/user.service';
 import { UserDocument } from 'src/user/schemas/user.schema';
-import { SuccessResponseWith } from 'src/consts';
+import { SuccessResponse, SuccessResponseWith } from 'src/consts';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +23,7 @@ export class AuthService {
   ): Promise<SuccessResponseWith<{ token: string }>> {
     const { name, email, password } = registerUserDto;
 
-    const userAlreadyExist = await this.userService.findUser(email);
+    const userAlreadyExist = await this.userService.findUserByEmail(email);
 
     if (userAlreadyExist) {
       throw new BadRequestException('user with email already exists');
@@ -46,7 +46,7 @@ export class AuthService {
   ): Promise<SuccessResponseWith<{ token: string }>> {
     const { email, password } = loginDto;
 
-    const user: UserDocument = await this.userService.findUser(email);
+    const user: UserDocument = await this.userService.findUserByEmail(email);
 
     if (!user) {
       throw new UnauthorizedException('Invalid email');
@@ -64,6 +64,22 @@ export class AuthService {
     const token = this.jwtService.sign({ id: user._id });
 
     return { success: true, token };
+  }
+
+  async verifyToken(token: string): Promise<SuccessResponse> {
+    try {
+      const payload = this.jwtService.verify(token);
+
+      const user = await this.userService.findUserById(payload.id);
+      if (!user) {
+        console.error('User does not exist');
+        return { success: false };
+      }
+      return { success: true };
+    } catch (error) {
+      console.error('Invalid token');
+      return { success: false };
+    }
   }
 
   async hashPassword(password: string): Promise<string> {
