@@ -2,7 +2,7 @@
 
 ```bash
 
-PORT=specifies the port of the backend server
+PORT=specifies the port of the backend server.
 Example:
 PORT=3010
 
